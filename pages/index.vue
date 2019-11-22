@@ -1,74 +1,52 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        nuxt-typescript
-      </h1>
-      <h2 class="subtitle">
-        My luminous Nuxt.js project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green"
-          >Documentation</a
+  <div class="flex justify-center">
+    <div class="block">
+      <h1 class="mt-8">Nuxt TypeScript</h1>
+      <div class="flex mt-8 mb-3">
+        <my-button class :greet="greetText" @click="onMyButtonClicked"
+          >挨拶する</my-button
         >
-
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-          >GitHub</a
-        >
-        <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        >
-          tailwind Button
-        </button>
+        <reset-button v-model="greetText" class="ml-3" initial-value="Hello" />
       </div>
+      <p>
+        <span class="font-extrabold">Message:</span>
+        {{ greetText }}
+      </p>
+      <p>挨拶した回数: {{ count }} 回</p>
+      <p v-if="isRegulars">常連さん！いつもありがとうございます！</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import MyButton from '@/components/MyButton.vue'
+import ResetButton from '@/components/ResetButton.vue'
 
 @Component({
   components: {
-    Logo: () => import('@/components/Logo.vue')
+    MyButton,
+    ResetButton
   }
 })
-export default class Index extends Vue {}
+export default class Index extends Vue {
+  private count: number = 0
+  public greetText: string = 'Hello'
+
+  public get isRegulars(): boolean {
+    return this.count >= 5
+  }
+
+  @Watch('count')
+  public countChange() {
+    if (this.count === 5) {
+      alert('常連になりましたよ！')
+    }
+  }
+
+  public onMyButtonClicked(count: number) {
+    this.count = count
+    this.greetText = 'こんにちは！'
+  }
+}
 </script>
-
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
